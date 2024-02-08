@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pillow
+transformers[torch]
+cors
+python-dotenv
+pymongo
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+beautifulsoup4
+pymongo[srv]
+motor

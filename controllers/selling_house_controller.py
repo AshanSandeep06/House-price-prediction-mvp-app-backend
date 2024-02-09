@@ -1,5 +1,7 @@
 import asyncio
+import os
 from fastapi.responses import JSONResponse
+import requests
 from models.selling_house_model import SellingHouse
 from fastapi import UploadFile, File, HTTPException
 from typing import List
@@ -65,6 +67,21 @@ class selling_house_controller:
         except Exception as e:
             response = {"code": "02", "message": str(e), "content": None}
             return JSONResponse(status_code=500, content=response, media_type="application/json")
+        
+    async def send_images_to_localhost(image_dir):
+        url = 'http://localhost:3000/api/v1/uploads'  # Replace with your localhost server's URL
+        
+        # Iterate over all files in the directory
+        for filename in os.listdir(image_dir):
+            if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
+                image_path = os.path.join(image_dir, filename)
+                files = {'image': open(image_path, 'rb')}
+                response = requests.post(url, files=files)
+                
+                if response.status_code == 200:
+                    print(f"Image {filename} successfully sent to localhost server.")
+                else:
+                    print(f"Failed to send image {filename} to localhost server.")
 
     # Save House Images
     async def save_house_images(self, selling_id: str, seller_id: str, files: List[UploadFile] = File(...)):
@@ -85,8 +102,8 @@ class selling_house_controller:
                     # For demonstration purposes, let's assume we're saving the file to a local directory named 'uploads'
                     file_path = f"F:/IJSE 4th Sem AI_ML/ML My Final Project/House-price-prediction_house-selling-ml-application/frontend/public/img/uploads/houseImages/{filename}"
                     db_file_path = f"{filename}"
-                    with open(file_path, "wb") as f:
-                        f.write(content)
+                    # with open(file_path, "wb") as f:
+                    #     f.write(content)
                     house_data['houseImages'].append(db_file_path)
 
                  # Update houseImages field in the existing document
